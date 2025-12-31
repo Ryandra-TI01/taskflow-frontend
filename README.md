@@ -1,22 +1,52 @@
-# ✅ Todo App — React + Vite
+# TaskFlow Client (React + Vite)
 
-A simple, fast, and scalable **Todo List App** built with **React + Vite**.  
-Dirancang dengan komponen reusable, clean code, dan performa tinggi — cocok untuk belajar maupun project nyata.
+The frontend client for TaskFlow, built to provide a seamless and responsive user experience. It leverages **Shadcn UI** for a polished aesthetic and **React Query** for efficient server state management.
 
----
+## Features
 
-## 🚀 Fitur Utama
+- **Modern UI:** Built with Tailwind CSS and Shadcn UI (Radix Primitives).
+- **Responsive Dashboard:** Sidebar navigation with specialized views (Inbox, Completed).
+- **Infinite Scroll:** Efficient loading for large task lists.
+- **Analytics:** Interactive charts visualizing productivity.
+- **Calendar View:** Month and Week views for task planning.
+- **Dark Mode Support:** Fully theme-aware components.
 
-- ⚡ Super cepat dengan [Vite](https://vitejs.dev/)
-- 🎯 Reusable components (`<Button />`, `<CustomInput />`, `<FormWrapper />`, dll)
-- 🎨 Styling pakai [Tailwind CSS](https://tailwindcss.com/)
-- ✅ ESLint + Prettier untuk jaga konsistensi kode
-- 🔄 Routing pakai `react-router-dom`
-- 🔐 Siap integrasi Auth dan Context
-- 🧪 Siap untuk testing (opsional)
-- 📦 Mudah di-deploy
+## Tech Stack
 
----
+- **Core:** React 18, Vite
+- **Language:** JavaScript / TypeScript (Hybrid)
+- **Styling:** Tailwind CSS, Shadcn UI, Lucide Icons
+- **State Management:** TanStack Query (React Query) v5
+- **Routing:** React Router DOM v6
+- **Forms:** React Hook Form (Planned) / Controlled Components
 
-## 📁 Struktur Folder
+## Installation & Usage
 
+### 1. Install Dependencies
+```bash
+npm install
+```
+
+### 2. Configure Environment
+Create a `.env` file in the root of `react-todo` if specific config is needed (defaults usually work for local dev).
+```env
+VITE_API_BASE_URL=http://localhost:8000
+```
+
+### 3. Run Development Server
+```bash
+npm run dev
+```
+
+### 4. Build for Production
+```bash
+npm run build
+```
+
+## Key Directories
+
+- `src/components/ui` - Shadcn UI reusable components.
+- `src/components/tasks` - Task-specific logic (Forms, Lists).
+- `src/pages` - Main route views (TaskPage, Analytics, Calendar).
+- `src/hooks` - Custom hooks (useTasks, useAuth).
+- `src/context` - Global providers (AuthContext, TaskEditContext).

@@ -25,7 +25,7 @@ export default function Navbar() {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const { openModal, closeModal } = useModal();
   const dropdownRef = useRef(null);
-  
+
   const navigate = useNavigate();
 
 
@@ -56,18 +56,15 @@ export default function Navbar() {
 
   const navItems = user
     ? [
-        { label: "My Tasks", href: ROUTES.TASKS, icon: CheckSquare },
-        { label: "Calendar", href: ROUTES.CALENDER, icon: Calendar },
-        { label: "Analytics", href: ROUTES.ANALYTICS, icon: BarChart3 },
-      ]
+      { label: "My Tasks", href: ROUTES.TASKS, icon: CheckSquare },
+      { label: "Calendar", href: ROUTES.CALENDER, icon: Calendar },
+      { label: "Analytics", href: ROUTES.ANALYTICS, icon: BarChart3 },
+    ]
     : [];
 
   return (
     <>
-      <nav className="fixed w-full top-0 z-50">
-        {/* Glass morphism background */}
-        <div className="absolute inset-0 bg-gradient-to-r from-blue-600/20 via-purple-600/20 to-pink-600/20 dark:from-blue-900/30 dark:via-purple-900/30 dark:to-pink-900/30" />
-        <div className="absolute inset-0 backdrop-blur-xl bg-white/10 dark:bg-black/10 border-b border-white/20 dark:border-white/10" />
+      <nav className="fixed w-full top-0 z-50 border-b border-border bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
 
         {/* Navigation content */}
         <div className="relative px-6 py-4">

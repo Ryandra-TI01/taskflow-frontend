@@ -1,5 +1,6 @@
-import Button from "../common/Button";
-import CustomDateTimePicker from "../common/CustomDateTimePicker";
+import { Button } from "../ui/button";
+import { Input } from "../ui/input";
+import { Textarea } from "../ui/textarea";
 
 export default function TaskEditForm({
   title,
@@ -11,62 +12,53 @@ export default function TaskEditForm({
   onCancel,
   onSave,
   isSaving,
-  onKeyDown = () => {},
+  onKeyDown = () => { },
 }) {
   return (
-    <div className="space-y-3">
-      <input
+    <div className="space-y-4 py-2">
+      <Input
         value={title}
         onChange={onTitleChange}
-        className="w-full text-sm font-medium border-none outline-none bg-transparent dark:text-white"
+        className="font-medium border-transparent hover:border-border focus:border-ring transition-colors"
         placeholder="Task title"
         disabled={isSaving}
         onKeyDown={onKeyDown}
       />
-      <textarea
+      <Textarea
         value={description}
         onChange={onDescChange}
-        className="w-full text-xs border-none outline-none bg-transparent resize-none dark:text-gray-200"
+        className="text-sm border-transparent hover:border-border focus:border-ring transition-colors resize-none min-h-[60px]"
         placeholder="Add description"
-        rows="2"
+        rows={2}
         disabled={isSaving}
         onKeyDown={onKeyDown}
       />
-      {/* <CustomDateTimePicker
-        value={dueDate}
-        onChange={onDueDateChange}
-        showTime={true}
-        timeInterval={15}
-      /> */}
-      <input
-        type="date"
-        name="dueDate"
-        id="dueDate"
-        value={dueDate.date}
-        onChange={(e) => onDueDateChange({ ...dueDate, date: e.target.value })}
-        onKeyDown={onKeyDown}
-        className="hover:bg-gray-100 dark:bg-gray-200 dark:hover:bg-gray-300 transition-colors rounded px-2 py-1 text-sm"
-      />
-      <br />
-      <input
-        type="time"
-        name="dueDate"
-        id="dueDate"
-        value={dueDate.time}
-        onChange={(e) => onDueDateChange({ ...dueDate, time: e.target.value })}
-        className="hover:bg-gray-100 dark:bg-gray-200 dark:hover:bg-gray-300 transition-colors rounded px-2 py-1 text-sm"
-        onKeyDown={onKeyDown}
-      />
 
-      <div className="flex justify-end gap-2 border-t pt-3 border-gray-100">
-        <Button onClick={onCancel} variant="cancel" width="inline">
+      <div className="flex gap-2">
+        <Input
+          type="date"
+          value={dueDate.date}
+          onChange={(e) => onDueDateChange({ ...dueDate, date: e.target.value })}
+          onKeyDown={onKeyDown}
+          className="w-auto"
+        />
+        <Input
+          type="time"
+          value={dueDate.time}
+          onChange={(e) => onDueDateChange({ ...dueDate, time: e.target.value })}
+          className="w-auto"
+          onKeyDown={onKeyDown}
+        />
+      </div>
+
+      <div className="flex justify-end gap-2 pt-2">
+        <Button onClick={onCancel} variant="ghost" size="sm">
           Cancel
         </Button>
         <Button
           onClick={onSave}
           disabled={!title.trim() || isSaving}
-          variant="primary"
-          width="inline"
+          size="sm"
         >
           {isSaving ? "Saving..." : "Save"}
         </Button>

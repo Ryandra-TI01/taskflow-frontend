@@ -6,6 +6,7 @@ import TaskEditForm from "./TaskEditForm";
 import { toast } from "react-toastify";
 import { useTaskEdit } from "../../context/TaskEditContext";
 import { motion, AnimatePresence } from "framer-motion";
+import { cn } from "../../lib/utils";
 
 export default function TaskItem({ task, onUpdate, onDelete }) {
   // Context for editing tasks
@@ -62,8 +63,8 @@ export default function TaskItem({ task, onUpdate, onDelete }) {
       editDueDate.date && editDueDate.time
         ? `${editDueDate.date}T${editDueDate.time}:00`
         : editDueDate.date
-        ? `${editDueDate.date}T00:00:00`
-        : null;
+          ? `${editDueDate.date}T00:00:00`
+          : null;
 
     const updatedTask = {
       ...task,
@@ -106,9 +107,11 @@ export default function TaskItem({ task, onUpdate, onDelete }) {
   return (
     <li
       ref={formRef}
-      className={`group flex items-start gap-3 p-3 rounded-lg transition-[box-shadow] duration-300 dark:bg-white/10 backdrop-blur-xl border border-white/20 ${
-        isEditing ? "shadow border border-gray-100" : "dark:hover:bg-white/5"
-      }`}
+      className={cn(
+        "group flex items-start gap-3 p-3 rounded-lg transition-all duration-300 border bg-card hover:shadow-sm",
+        isEditing ? "ring-2 ring-primary border-transparent" : "hover:border-primary/50",
+        task.is_completed && "opacity-60 bg-muted/50"
+      )}
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
     >

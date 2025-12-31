@@ -1,6 +1,8 @@
 import { useState } from "react";
-import { ChevronDown, ChevronRight } from "lucide-react";
+import { ChevronRight } from "lucide-react";
 import TaskList from "./TaskList";
+import { Button } from "../ui/button";
+import { cn } from "../../lib/utils";
 
 export default function CompleteAccordian({
   tasks,
@@ -13,31 +15,38 @@ export default function CompleteAccordian({
   const [isExpanded, setIsExpanded] = useState(false);
 
   return (
-    <section className="border-t border-gray-300 pt-4">
-      <button
+    <section className="border-t pt-4 mt-6">
+      <Button
+        variant="ghost"
         onClick={() => setIsExpanded((prev) => !prev)}
-        className="flex items-center justify-between w-full text-left rounded-lg px-3 py-2 hover:bg-gray-100 dark:hover:bg-white/10 backdrop-blur-xl  transition-colors duration-200"
+        className="flex items-center justify-between w-full h-auto py-2 px-3 hover:bg-muted/50"
       >
-        <h3 className="text-sm font-medium text-gray-500 dark:text-gray-200">
+        <span className="text-sm font-medium text-muted-foreground">
           Completed ({tasksLength})
-        </h3>
-        <ChevronRight className={`w-4 h-4 text-gray-800 dark:text-gray-200 ${isExpanded && "rotate-90"} duration-200 ease-in-out`} />
-      </button>
+        </span>
+        <ChevronRight
+          className={cn(
+            "w-4 h-4 text-muted-foreground transition-transform duration-200",
+            isExpanded && "rotate-90"
+          )}
+        />
+      </Button>
 
       {isExpanded && (
-        <div className="mt-2 space-y-2">
+        <div className="mt-2 space-y-2 animate-accordion-down">
           <TaskList
             tasks={tasks}
             onUpdate={onUpdate}
             onDelete={onDelete}
           />
           {hasMore && (
-            <button
+            <Button
+              variant="link"
               onClick={onLoadMore}
-              className="text-xs text-purple-500 dark:text-white hover:underline"
+              className="text-xs h-auto p-0 text-primary"
             >
               Load More
-            </button>
+            </Button>
           )}
         </div>
       )}

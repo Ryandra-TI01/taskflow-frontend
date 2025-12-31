@@ -7,9 +7,9 @@ import ErrorState from "./ErrorState";
 import Loading from "../common/Loading";
 import { useTasks } from "../../hooks/useTasks";
 import { useAuth } from "../../context/AuthContext";
-import {TaskEditProvider} from "../../context/TaskEditContext";
+import { TaskEditProvider } from "../../context/TaskEditContext";
 
-export default function TaskSection() {
+export default function TaskSection({ view }) {
   const { token } = useAuth();
   const {
     incompleteQuery,
@@ -22,71 +22,63 @@ export default function TaskSection() {
 
   const loadMoreRef = useRef();
 
-  const isLoading = incompleteQuery.isLoading || completedQuery.isLoading;
-  const isError = incompleteQuery.isError || completedQuery.isError;
-  const errorMsg = incompleteQuery.error?.message || completedQuery.error?.message;
+  const currentQuery = view === 'inbox' ? incompleteQuery : completedQuery;
+  const isLoading = currentQuery.isLoading;
+  const isError = currentQuery.isError;
+  const errorMsg = currentQuery.error?.message;
 
-  const incompleteTasks = incompleteQuery.data?.pages.flatMap((page) => page.data) || [];    
+  const incompleteTasks = incompleteQuery.data?.pages.flatMap((page) => page.data) || [];
   const completedTasks = completedQuery.data?.pages.flatMap((page) => page.data) || [];
-  const taskStats = taskStatsQuery.data? taskStatsQuery.data : { total: 0, completed: 0, incomplete: 0 };
 
-  // ⛓ Infinite Scroll for Incomplete
+  const tasksToDisplay = view === 'inbox' ? incompleteTasks : completedTasks;
+
+  // Infinite Scroll logic
   useEffect(() => {
-    if (!loadMoreRef.current || !incompleteQuery.hasNextPage) return;
+    if (!loadMoreRef.current || !currentQuery.hasNextPage) return;
     const observer = new IntersectionObserver(
       (entries) => {
         if (entries[0].isIntersecting) {
-          incompleteQuery.fetchNextPage();
+          currentQuery.fetchNextPage();
         }
       },
       { threshold: 1 }
     );
     observer.observe(loadMoreRef.current);
     return () => observer.disconnect();
-  }, [incompleteQuery]);
+  }, [currentQuery, view]);
 
   if (isLoading) return <Loading />;
   if (isError)
     return (
       <ErrorState
         message={errorMsg}
-        onRetry={() => {
-          incompleteQuery.refetch();
-          completedQuery.refetch();
-        }}
+        onRetry={() => currentQuery.refetch()}
       />
     );
 
   return (
     <TaskEditProvider>
-      <div className="max-w-2xl mx-auto p-6 min-h-screen">
-        <TaskForm onAdded={(task) => addTask.mutate(task)} />
+      <div className="max-w-2xl mx-auto min-h-screen space-y-6">
+        {view === 'inbox' && (
+          <TaskForm onAdded={(task) => addTask.mutate(task)} />
+        )}
 
-        {incompleteTasks.length === 0 && <EmptyTask />}
-
-        <div className="space-y-4">
-          {incompleteTasks.length > 0 && (
-            <>
-              <TaskList
-                tasks={incompleteTasks}
-                onUpdate={(task) => updateTask.mutate(task)}
-                onDelete={(id) => deleteTask.mutate(id)}
-              />
-              <div ref={loadMoreRef} className="h-6" />
-            </>
-          )}
-
-          {completedTasks.length > 0 && (
-            <CompleteAccordion
-              tasks={completedTasks}
-              tasksLength={taskStats.completed}
-              hasMore={completedQuery.hasNextPage}
-              onLoadMore={completedQuery.fetchNextPage}
+        {tasksToDisplay.length === 0 ? (
+          <EmptyTask message={view === 'completed' ? "No completed tasks yet" : "All tasks are done!"} />
+        ) : (
+          <div className="space-y-4">
+            <TaskList
+              tasks={tasksToDisplay}
               onUpdate={(task) => updateTask.mutate(task)}
               onDelete={(id) => deleteTask.mutate(id)}
             />
-          )}
-        </div>
+
+            {/* Load more indicator */}
+            <div ref={loadMoreRef} className="h-6 flex justify-center">
+              {currentQuery.isFetchingNextPage && <div className="animate-spin w-5 h-5 border-2 border-primary border-t-transparent rounded-full" />}
+            </div>
+          </div>
+        )}
       </div>
     </TaskEditProvider>
   );

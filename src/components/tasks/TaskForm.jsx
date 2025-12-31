@@ -1,12 +1,11 @@
 import { Plus } from "lucide-react";
 import { toast } from "react-toastify";
-import Button from "../common/Button";
+import { Button } from "../ui/button";
+import { Input } from "../ui/input";
+import { Textarea } from "../ui/textarea";
+import { Card, CardContent } from "../ui/card";
 import { useTaskForm } from "../../hooks/useTaskForm";
-import {
-  getFormStyles,
-  getPlusIconStyles,
-  getInputStyles,
-} from "../../utils/formStyles";
+import { cn } from "../../lib/utils";
 
 export default function TaskForm({ onAdded }) {
   const {
@@ -19,8 +18,6 @@ export default function TaskForm({ onAdded }) {
       setDueDate,
       isExpanded,
       setIsExpanded,
-      isHovered,
-      setIsHovered,
       isFocused,
       setIsFocused,
       loading,
@@ -31,31 +28,28 @@ export default function TaskForm({ onAdded }) {
   } = useTaskForm({ onAdded });
 
   return (
-    <div
+    <Card
       ref={formRef}
-      className={getFormStyles({ isExpanded, isFocused, isHovered })}
-      onMouseEnter={() => setIsHovered(true)}
-      onMouseLeave={() => setIsHovered(false)}
+      className={cn(
+        "transition-all duration-300 border-transparent shadow-none hover:shadow-md hover:border-border",
+        (isExpanded || isFocused) && "shadow-lg border-border"
+      )}
     >
-      <div className="p-4">
+      <CardContent className="p-4">
         <div className="flex items-start gap-3">
-          <div className="w-5 h-5 flex-shrink-0 mt-0.5">
+          <div className="flex items-center justify-center w-8 h-8 mt-1">
             <Plus
-              className={`cursor-pointer ${getPlusIconStyles({
-                isExpanded,
-                isFocused,
-                isHovered,
-              })}`}
+              className={cn(
+                "h-5 w-5 text-muted-foreground transition-transform duration-300 cursor-pointer",
+                isExpanded && "rotate-45"
+              )}
               onClick={() => setIsExpanded(!isExpanded)}
-              aria-label={
-                isExpanded ? "Collapse task form" : "Expand task form"
-              }
             />
           </div>
-          <div className="flex-1">
-            <input
+
+          <div className="flex-1 space-y-4">
+            <Input
               ref={titleInputRef}
-              type="text"
               value={title}
               onChange={(e) => setTitle(e.target.value)}
               onFocus={() => {
@@ -65,85 +59,73 @@ export default function TaskForm({ onAdded }) {
               onBlur={() => setIsFocused(false)}
               onKeyDown={handleKeyDown}
               placeholder="Add new task"
-              className={getInputStyles({ isExpanded, isFocused })}
+              className="border-none shadow-none focus-visible:ring-0 px-0 text-base font-medium placeholder:font-normal"
               disabled={loading}
             />
 
             <div
-              className={`overflow-hidden transition-all duration-300 ${
-                isExpanded ? "max-h-96 opacity-100 mt-4" : "max-h-0 opacity-0"
-              }`}
+              className={cn(
+                "overflow-hidden transition-all duration-300 space-y-4",
+                isExpanded ? "max-h-96 opacity-100" : "max-h-0 opacity-0"
+              )}
             >
-              <textarea
+              <Textarea
                 value={description}
                 onChange={(e) => setDescription(e.target.value)}
                 onKeyDown={handleKeyDown}
                 placeholder="Add description"
-                className="w-full text-sm placeholder-gray-400 border-none outline-none resize-none focus:placeholder-purple-400 transition-all duration-200"
-                rows="2"
+                className="resize-none border-none focus-visible:ring-0 px-0 min-h-[60px]"
+                rows={2}
                 disabled={loading}
-                aria-multiline="true"
-                aria-label="Task Description"
               />
 
-              <div>
-                <input
+              <div className="flex gap-4">
+                <Input
                   type="date"
-                  name="dueDate"
-                  id="dueDate"
                   value={dueDate.date}
                   onChange={(e) =>
                     setDueDate({ ...dueDate, date: e.target.value })
                   }
-                  className="text-sm"
+                  className="w-auto"
                 />
-                <br />
-                <input
+                <Input
                   type="time"
-                  name="dueDate"
-                  id="dueDate"
                   value={dueDate.time}
                   onChange={(e) =>
                     setDueDate({ ...dueDate, time: e.target.value })
                   }
-                  className="text-sm"
+                  className="w-auto"
                 />
+              </div>
+
+              <div className="flex justify-end gap-2 pt-2">
+                <Button
+                  onClick={resetForm}
+                  variant="ghost"
+                  disabled={loading}
+                  type="button"
+                >
+                  Cancel
+                </Button>
+                <Button
+                  onClick={async () => {
+                    try {
+                      await onSubmit();
+                      toast.success("Task added successfully!");
+                    } catch (err) {
+                      console.error("Error adding task", err);
+                      toast.error("Failed to add task.");
+                    }
+                  }}
+                  disabled={!title.trim() || loading}
+                >
+                  Add Task
+                </Button>
               </div>
             </div>
           </div>
         </div>
-
-        <div
-          className={`flex justify-end gap-2 pt-3 border-t border-gray-100 transition-[max-height] duration-300 ${
-            isExpanded ? "max-h-16 opacity-100 mt-4" : "max-h-0 opacity-0 mt-0"
-          }`}
-        >
-          <Button
-            onClick={resetForm}
-            variant="cancel"
-            width="inline"
-            disabled={loading}
-          >
-            Cancel
-          </Button>
-          <Button
-            onClick={async () => {
-              try {
-                await onSubmit();
-                toast.success("Task added successfully!");
-              } catch (err) {
-                console.error("Error adding task", err);
-                toast.error("Failed to add task.");
-              }
-            }}
-            loading={loading}
-            disabled={!title.trim() || loading}
-            width="inline"
-          >
-            <Plus className="w-4 h-4 mr-1" /> Add Task
-          </Button>
-        </div>
-      </div>
-    </div>
+      </CardContent>
+    </Card>
   );
 }
